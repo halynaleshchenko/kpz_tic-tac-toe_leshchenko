@@ -39,6 +39,11 @@ $board = new Board();
 
 <span id="currentPlayer"></span>
 
+<div id="gameOptions" style="display: none;">
+    <button id="continueGame">Продовжити гру</button>
+    <button id="restartGame">Повернутись до початкового екрану</button>
+</div>
+
 <script src="js/script.js"></script>
 </body>
 </html>
