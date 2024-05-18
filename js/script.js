@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const restartGameBtn = document.getElementById('restartGame');
 
     let currentPlayerSymbol;
+    let canPlaceMark = true;
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -33,16 +34,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const cells = board.getElementsByTagName('td');
         for (let i = 0; i < cells.length; i++) {
-            cells[i].innerHTML = ''; // Clear cells
-            cells[i].classList.remove('highlight'); // Remove highlight
-            cells[i].removeEventListener('click', handleCellClick); // Remove previous event listeners
+            cells[i].innerHTML = ''; // Очищаємо клітинки
+            cells[i].classList.remove('highlight');
+            cells[i].removeEventListener('click', handleCellClick);
             cells[i].addEventListener('click', handleCellClick);
         }
 
         gameOptions.style.display = 'none';
+        canPlaceMark = true;
     }
 
     function handleCellClick(event) {
+        if (!canPlaceMark) return;
         const cell = event.target;
         if (cell.innerHTML !== '') {
             return;
@@ -55,9 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
             currentPlayerDisplay.textContent = `Гравець ${currentPlayerSymbol} виграв!`;
             highlightWinningCells(winningCells);
             gameOptions.style.display = 'flex';
+            canPlaceMark = false;
         } else if (isBoardFull()) {
             currentPlayerDisplay.textContent = 'Нічия!';
             gameOptions.style.display = 'flex';
+            canPlaceMark = false;
         } else {
             currentPlayerSymbol = currentPlayerSymbol === 'X' ? 'O' : 'X';
             currentPlayerDisplay.textContent = `Гравець ${currentPlayerSymbol} ходить`;
@@ -81,7 +86,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (document.getElementById(a).innerHTML === symbol &&
                 document.getElementById(b).innerHTML === symbol &&
                 document.getElementById(c).innerHTML === symbol) {
-                return combination;
+                return combination
+                    .map(cellId => document.getElementById(cellId))
+                    .filter(cell => cell.innerHTML === symbol)
+                    .map(cell => cell.id);
             }
         }
 
@@ -89,8 +97,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function highlightWinningCells(cells) {
-        for (const cell of cells) {
-            document.getElementById(cell).classList.add('highlight');
+        for (const cellId of cells) {
+            document.getElementById(cellId).classList.add('highlight');
         }
     }
 
